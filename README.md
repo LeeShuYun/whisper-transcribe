@@ -24,6 +24,8 @@ python -m venv venv
 venv\Scripts\activate
 pip install Flask
 pip install Flask-RESTful
+pip install sqlalchemy
+pip install transformers torch torchvision torchaudio
 pip freeze > requirements.txt
 ```
 
@@ -38,3 +40,4 @@ ng new frontend
 ## Dev References
 - https://sqlite.org/fts5.html#external_content_tables
 - https://docs.sqlalchemy.org/en/20/tutorial/data_select.html#the-select-sql-expression-construct
+- https://werkzeug.palletsprojects.com/en/stable/datastructures/#werkzeug.datastructures.FileStorage

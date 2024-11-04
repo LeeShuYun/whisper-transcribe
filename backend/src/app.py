@@ -4,6 +4,9 @@ from .entities.entity import Session, engine, Base, Transcribe, TranscriptionInd
 from sqlalchemy import select, insert
 from sqlalchemy.sql import text
 import json
+import os
+from .services.whispertiny import audio_to_text
+from .config.config import DevelopmentConfig
 
 print("In module products __package__, __name__ ==", __package__, __name__)
 
@@ -16,7 +19,7 @@ api = Api(app)
 @app.route('/')
 def index():
     """ Returns details about service according to HATEOAS"""
-    details = {
+    data = {
         "version": "1.0",
         "links": [
             {
@@ -41,7 +44,9 @@ def index():
             }
         ]
     }
-    return details
+    response = jsonify(data)
+    response.headers.add('Access-Control-Allow-Origin', '*') #TODO should restrict for prod
+    return response
 
 # GET /health: Returns the status of the service.
 class get_health(Resource):
@@ -72,17 +77,36 @@ class get_health(Resource):
             "status": "UP",
             "links": links
         }
-        return data
+        response = jsonify(data)
+        response.headers.add('Access-Control-Allow-Origin', '*') #TODO should restrict
+        return response
 api.add_resource(get_health,'/health')
 
+
 # ii. POST /transcribe: Accepts audio files, transcribe and save results in db.
+
 class post_transcribe(Resource):
     def post(self):
-        filename = "placeholder"
-        transcription = Transcribe("test1", "test2", "test3")
-        session.add(transcription)
-        session.commit()
+        try:
+            # extract file from request body
+            file = request.files['audio']
+            print(file)
 
+            print("processing file...")
+            if not file:
+                abort(400, message='Empty file.')
+            filename = request.files['audio'].filename
+            if not filename.lower().endswith(('.mp3', '.wav')):
+                abort(400, message='Wrong file format: {}'.format(e))
+            file_bytes = file.read()
+            transcription = audio_to_text(file_bytes)
+            print(transcription)
+            transcribe_record = Transcribe(filename, transcription)
+            session.add(transcribe_record)
+            session.commit()
+        except Exception as e:
+            abort(400, message='Failed to process file: {}'.format(e))
+        # TODO should handle the linking elegantly
         links = [
             {
                 "href": "/transcribe",
@@ -100,12 +124,16 @@ class post_transcribe(Resource):
                 "method": "GET"
             }
         ]
-        data={
+        response={
             "status": "Success",
             "details": "Transcription of '" + filename + "' saved.",
             "links" : links
         }
-        return data
+
+        response = jsonify(response)
+        response.headers.add('Access-Control-Allow-Origin', '*') #TODO should restrict
+        return response
+
 api.add_resource(post_transcribe,'/transcribe')
 
 # iii. GET /transcriptions: Retrieves all transcriptions from the database.
@@ -129,6 +157,8 @@ class get_search(Resource):
         #retrieve search term from query param
         search_term = request.args.get('query')
         print(search_term)
+
+         # TODO validation
 
         #query the database for all audio filenames that match search term
         query = (

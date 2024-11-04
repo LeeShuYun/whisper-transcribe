@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import create_engine, Column, String, Integer, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -25,9 +25,8 @@ class Transcribe(Base):
     audio_file_name = Column(String)
     transcription = Column(String)
 
-    def __init__(self, id: int , created_on: str, audio_file_name: str, transcription: str):
+    def __init__(self, audio_file_name: str, transcription: str):
         """Initialize new object with all params. time in utc"""
-        self.id = id
         self.created_on = datetime.now(timezone.utc)
         self.audio_file_name = audio_file_name
         self.transcription = transcription
