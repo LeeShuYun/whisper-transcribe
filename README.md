@@ -26,6 +26,7 @@ pip install Flask
 pip install Flask-RESTful
 pip install sqlalchemy
 pip install transformers torch torchvision torchaudio
+pip install flask-cors
 pip freeze > requirements.txt
 ```
 
@@ -41,3 +42,7 @@ ng new frontend
 - https://sqlite.org/fts5.html#external_content_tables
 - https://docs.sqlalchemy.org/en/20/tutorial/data_select.html#the-select-sql-expression-construct
 - https://werkzeug.palletsprojects.com/en/stable/datastructures/#werkzeug.datastructures.FileStorage
+- https://ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm#sec_5_1_5
+- https://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven
+- https://angular.dev/reference/migrations/standalone
+- https://github.com/corydolphin/flask-cors

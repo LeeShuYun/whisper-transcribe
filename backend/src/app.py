@@ -1,10 +1,12 @@
 from flask import Flask, jsonify, request, abort
 from flask_restful import Api, Resource, fields, marshal_with, request
-from .entities.entity import Session, engine, Base, Transcribe, TranscriptionIndex, transcribe_fields
+from flask_cors import CORS
 from sqlalchemy import select, insert
 from sqlalchemy.sql import text
 import json
 import os
+
+from .entities.entity import Session, engine, Base, Transcribe, TranscriptionIndex, transcribe_fields
 from .services.whispertiny import audio_to_text
 from .config.config import DevelopmentConfig
 
@@ -14,6 +16,7 @@ Base.metadata.create_all(engine)
 session = Session()
 
 app = Flask(__name__)
+CORS(app)
 api = Api(app)
 
 @app.route('/')
@@ -145,6 +148,8 @@ class get_transcriptions(Resource):
             print (t.__dict__)
         if not transcriptions:
             abort(404, description="Transcriptions not found.")
+        # response = jsonify()transcriptions
+        # response.headers.add('Access-Control-Allow-Origin', '*') #TODO should restrict
         return (transcriptions)
 
 api.add_resource(get_transcriptions, '/transcriptions')
