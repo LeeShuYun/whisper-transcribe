@@ -1,4 +1,12 @@
-<p>Transcribe results</p>
-<code>
-  {{transcription | json}}
-</code>
+@if(transcriptionlist$.length <= 0){
+  <p>Processing your files...</p>
+} @else {
+  <h2>Transcribe results</h2>
+  @for(transcription of transcriptionlist$; track transcription.id){
+    <div>
+      <code>
+        {{ transcription  | json }}
+      </code>
+    </div>
+  }
+}

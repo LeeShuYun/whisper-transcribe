@@ -11,6 +11,7 @@ import { HelperService } from './services/helper.service';
 import { UploadComponent } from './components/upload/upload.component';
 import { InstructionsComponent } from './components/instructions/instructions.component';
 import { TranscriptionsComponent } from './components/transcriptions/transcriptions.component';
+import { NgxFileDropModule } from 'ngx-file-drop';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { TranscriptionsComponent } from './components/transcriptions/transcripti
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    NgxFileDropModule
   ],
   providers: [ HelperService ],
   bootstrap: [AppComponent]

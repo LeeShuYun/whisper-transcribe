@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Transcription } from '../../model/entity';
+import { HelperService } from '../../services/helper.service';
 
 @Component({
   selector: 'app-upload',
@@ -7,7 +8,13 @@ import { Transcription } from '../../model/entity';
   styleUrl: './upload.component.css'
 })
 export class UploadComponent {
-  @Input()
-  transcription: Transcription[] = [];
 
+  transcriptionlist$: Transcription[] = [];
+
+  constructor(private helperService: HelperService){
+    this.helperService.onNewTranscriptions.subscribe(data => {
+      console.debug(data)
+      this.transcriptionlist$.push(data)
+    })
+  }
 }

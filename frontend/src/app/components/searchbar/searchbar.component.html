@@ -1,36 +1,55 @@
-<h2> Search existing transcriptions </h2>
-<form [formGroup]="searchform" (ngSubmit)="getSearchResults()">
-  <table>
+<section>
+  <h2> Search existing transcriptions </h2>
+
+  <form [formGroup]="searchform" (ngSubmit)="getSearchResults()">
+    <table>
       <tr>
         <td>
           Search database by filename:
         </td>
         <td>
-          <input type="text" size="30" formControlName="searchterm" placeholder="Sample 1"/>
+          <input type="text" size="30" formControlName="searchterm" placeholder="Sample 1.mp3"/>
           <button type="submit" [disabled]="searchform.invalid"> Search </button>
         </td>
       </tr>
-  </table>
-</form>
+    </table>
+  </form>
+</section>
 
-<h2> Transcribe your audio file </h2>
-<form [formGroup]="uploadform" (ngSubmit)="transcribeAudioFile()" enctype="multipart/form-data">
-	<table>
-		<tr>
-			<td>Transcribe an MP3 file:</td>
-      <td>
-        <input type="file" size="30" formControlName="file"/>
-        <button type="submit" [disabled]="uploadform.invalid">Transcribe an mp3</button>
-      </td>
-		</tr>
-    <tr>
-      <td></td>
-      <td>
-        <p [hidden]=isAudioFileValid>Audio file is not valid.</p>
-      </td>
-    </tr>
-	</table>
-</form>
+<br>
 
-<button type="button" [routerLink]="['/']">Back</button>
-<button type="button" [routerLink]="['/transcriptions']">See All Transcriptions</button>
+<section>
+
+  <h2> Transcribe your audio file </h2>
+
+  <div class="center">
+    <ngx-file-drop dropZoneLabel="Drop files here" (onFileDrop)="dropped($event)"
+    (onFileOver)="fileOver($event)" (onFileLeave)="fileLeave($event)">
+    <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+      Optional custom content that replaces the the entire default content.
+      <button type="button" (click)="openFileSelector()">Browse Files</button>
+    </ng-template>
+  </ngx-file-drop>
+  <p [hidden]=isAudioFileValid style="color:crimson">Audio file is not valid.</p>
+  <div class="upload-table">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Uploaded files:</th>
+        </tr>
+      </thead>
+      <tbody class="upload-name-style">
+        <tr *ngFor="let item of files; let i=index">
+          <td><strong>{{ item.relativePath }}</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</section>
+
+<br>
+<section>
+  <button type="button" [routerLink]="['/']">Back</button>
+  <button type="button" [routerLink]="['/transcriptions']">See All Transcriptions</button>
+</section>

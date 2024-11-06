@@ -3,19 +3,33 @@ import { HttpClient, HttpParams } from '@angular/common/http'
 import { Health, Transcription } from '../model/entity';
 import { firstValueFrom, map, Subject, tap } from 'rxjs';
 import { API_ENDPOINT } from '../model/constants';
+import { Router } from '@angular/router';
 @Injectable({
   providedIn: 'root'
 })
 export class HelperService {
   audioData = ""
 
-  constructor(private httpClient: HttpClient) {}
+  onNewTranscriptions = new Subject<Transcription>()
+
+  constructor(private router: Router, private httpClient: HttpClient) {}
 
   // POST "/transcribe"
-  uploadTranscribe(audio: Blob){
-    const formData = new FormData();
-    formData.set("audiofile", audio);
-    return firstValueFrom(this.httpClient.post<Transcription>(`${API_ENDPOINT}/transcribe`,formData));
+  uploadTranscribe(audiofile: Blob){
+    const formData = new FormData()
+    formData.append('audiofile', audiofile)
+    // maybe TODO auth, but not asked
+    // const headers = new HttpHeaders({
+      // 'security-token': 'mytoken'
+    // })
+    this.httpClient.post(`${API_ENDPOINT}/transcribe`, formData, { responseType: 'json' })
+    .subscribe((data : any) => {
+      console.info("received data", data.transcription)
+      this.onNewTranscriptions.next({
+        audio_file_name: data.filename,
+        transcription: data.transcription,
+      } as Transcription)
+    })
   }
 
   // GET http://127.0.0.1:5000/search?query=sample
@@ -24,7 +38,6 @@ export class HelperService {
     const params = new HttpParams()
         .set('query', searchterm)
         // .set('pageSize', 10)
-
     return firstValueFrom(
       this.httpClient.get<Transcription[]>(`${API_ENDPOINT}/search`, { params })
         .pipe(
@@ -42,7 +55,8 @@ export class HelperService {
             })
           })
         )
-    ).then(result => {
+    ) // TODO cleanup this looks insane
+    .then(result => {
       console.debug('>>> helpersvc result[0]: ',
         result[0].id,
         result[0].created_on,
@@ -75,7 +89,8 @@ export class HelperService {
             })
           })
         )
-    ).then(result => {
+    ) // TODO cleanup this looks insane
+    .then(result => {
       console.debug('>>> helpersvc result[0]: ',
         result[0].id,
         result[0].created_on,
