@@ -13,6 +13,7 @@ export class SearchbarComponent implements OnInit{
   searchform!: FormGroup;
   uploadform!: FormGroup;
   audiofile!: Blob;
+  isAudioFileValid: boolean = true;
 
   constructor(private router: Router, private fb: FormBuilder,
     private helperService : HelperService){
@@ -31,10 +32,16 @@ export class SearchbarComponent implements OnInit{
 
   //TODO upload and transcribe
   transcribeAudioFile(){
-    const file = this.uploadform.value;
-    console.debug(file)
-    this.helperService.uploadTranscribe(file);
-    this.router.navigate(['/transcribe']);
+    const audiofile = this.uploadform.value.file;
+    console.debug("file to upload:", audiofile)
+    if (!!audiofile)
+      this.isAudioFileValid = false
+    else
+    {
+      this.isAudioFileValid = true
+      this.helperService.uploadTranscribe(audiofile);
+      this.router.navigate(['/transcribe']);
+    }
   }
 
   // puts search query

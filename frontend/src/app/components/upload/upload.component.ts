@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { Transcription } from '../../model/entity';
 
 @Component({
   selector: 'app-upload',
@@ -6,5 +7,7 @@ import { Component } from '@angular/core';
   styleUrl: './upload.component.css'
 })
 export class UploadComponent {
+  @Input()
+  transcription: Transcription[] = [];
 
 }

@@ -6,7 +6,7 @@
           Search database by filename:
         </td>
         <td>
-          <input type="text" size="30" formControlName="searchterm"/>
+          <input type="text" size="30" formControlName="searchterm" placeholder="Sample 1"/>
           <button type="submit" [disabled]="searchform.invalid"> Search </button>
         </td>
       </tr>
@@ -20,9 +20,15 @@
 			<td>Transcribe an MP3 file:</td>
       <td>
         <input type="file" size="30" formControlName="file"/>
-        <button type="submit" [disabled]="uploadform.invalid"> Transcribe </button>
+        <button type="submit" [disabled]="uploadform.invalid">Transcribe an mp3</button>
       </td>
 		</tr>
+    <tr>
+      <td></td>
+      <td>
+        <p [hidden]=isAudioFileValid>Audio file is not valid.</p>
+      </td>
+    </tr>
 	</table>
 </form>
 

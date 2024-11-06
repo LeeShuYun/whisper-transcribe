@@ -1,5 +1,5 @@
 
-<h2>Search Results</h2>
+<h2>All Transcriptions</h2>
 
 @for(transcription of transcriptionlist; track transcription.id){
     <div>
@@ -7,4 +7,8 @@
       {{ transcription | json }}
     </code>
   </div>
-  }
+}
+
+<h2 *ngIf="transcriptionlist.length <= 0">
+  No transcriptions found.
+</h2>

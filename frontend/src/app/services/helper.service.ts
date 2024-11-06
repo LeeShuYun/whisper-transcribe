@@ -14,7 +14,7 @@ export class HelperService {
   // POST "/transcribe"
   uploadTranscribe(audio: Blob){
     const formData = new FormData();
-    formData.set("audioFile", audio);
+    formData.set("audiofile", audio);
     return firstValueFrom(this.httpClient.post<Transcription>(`${API_ENDPOINT}/transcribe`,formData));
   }
 
@@ -50,8 +50,9 @@ export class HelperService {
         result[0].transcription)
       return result
     }).catch((error :any)=> {
-      console.error(`helpersvc error: ${error}`);
-      alert(`Error: ${JSON.stringify(error)}`)
+      console.error(`helpersvc error: ${JSON.stringify(error)}`);
+      if (error.status == 404)
+        console.debug(`No transcriptions found.`)
     })
   }
 
