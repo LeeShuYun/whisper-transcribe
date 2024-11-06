@@ -9,6 +9,7 @@ import os
 from .entities.entity import Session, engine, Base, Transcribe, TranscriptionIndex, transcribe_fields
 from .services.whispertiny import audio_to_text
 from .config.config import DevelopmentConfig
+from .config.constants import links
 
 print("In module products __package__, __name__ ==", __package__, __name__)
 
@@ -24,58 +25,15 @@ def index():
     """ Returns details about service according to HATEOAS"""
     data = {
         "version": "1.0",
-        "links": [
-            {
-                "href": "/transcribe",
-                "rel": "create",
-                "method": "POST"
-            },
-            {
-                "href": "/health",
-                "rel": "self",
-                "method": "GET"
-            },
-            {
-                "href": "/transcriptions",
-                "rel": "list",
-                "method": "GET"
-            },
-            {
-                "href": "/search",
-                "rel": "list",
-                "method": "GET"
-            }
-        ]
+        "links": links
     }
     response = jsonify(data)
     response.headers.add('Access-Control-Allow-Origin', '*') #TODO should restrict for prod
     return response
 
-# GET /health: Returns the status of the service.
+# GET /health: Returns the status of the service. TODO
 class get_health(Resource):
     def get(self):
-        links = [
-            {
-                "href": "/transcribe",
-                "rel": "create",
-                "method": "POST"
-            },
-            {
-                "href": "/health",
-                "rel": "self",
-                "method": "GET"
-            },
-            {
-                "href": "/transcriptions",
-                "rel": "list",
-                "method": "GET"
-            },
-            {
-                "href": "/search",
-                "rel": "list",
-                "method": "GET"
-            }
-        ]
         data={
             "status": "UP",
             "links": links
@@ -87,55 +45,42 @@ api.add_resource(get_health,'/health')
 
 
 # ii. POST /transcribe: Accepts audio files, transcribe and save results in db.
-
 class post_transcribe(Resource):
     def post(self):
         try:
+            print("trying... ")
             # extract file from request body
-            file = request.files['audio']
+            file = request.files['audiofile']
             print(file)
 
             print("processing file...")
             if not file:
-                abort(400, message='Empty file.')
-            filename = request.files['audio'].filename
+                abort(400, description='Empty file.')
+            filename = request.files['audiofile'].filename
             if not filename.lower().endswith(('.mp3', '.wav')):
-                abort(400, message='Wrong file format: {}'.format(e))
+                abort(400, description='Wrong file format.{}'.format(e))
             file_bytes = file.read()
             transcription = audio_to_text(file_bytes)
             print(transcription)
             transcribe_record = Transcribe(filename, transcription)
             session.add(transcribe_record)
             session.commit()
-        except Exception as e:
-            abort(400, message='Failed to process file: {}'.format(e))
-        # TODO should handle the linking elegantly
-        links = [
-            {
-                "href": "/transcribe",
-                "rel": "create",
-                "method": "POST"
-            },
-            {
-                "href": "/transcriptions",
-                "rel": "list",
-                "method": "GET"
-            },
-            {
-                "href": "/search",
-                "rel": "list",
-                "method": "GET"
+            data={
+                "status": "Success",
+                "details": "Transcription of '" + filename + "' saved.",
+                "filename": filename,
+                "transcription" : transcription,
+                "links" : links
             }
-        ]
-        response={
-            "status": "Success",
-            "details": "Transcription of '" + filename + "' saved.",
-            "links" : links
-        }
+            # create response
+            response = jsonify(data)
+            response.headers.add('Access-Control-Allow-Origin', '*') #TODO should restrict
+            return response
+        except Exception as e:
+            abort(400, description='Failed to process file.{}'.format(e))
 
-        response = jsonify(response)
-        response.headers.add('Access-Control-Allow-Origin', '*') #TODO should restrict
-        return response
+
+
 
 api.add_resource(post_transcribe,'/transcribe')
 
@@ -148,7 +93,7 @@ class get_transcriptions(Resource):
             print (t.__dict__)
         if not transcriptions:
             abort(404, description="Transcriptions not found.")
-        # response = jsonify()transcriptions
+        # response = jsonify(transcriptions)
         # response.headers.add('Access-Control-Allow-Origin', '*') #TODO should restrict
         return (transcriptions)
 

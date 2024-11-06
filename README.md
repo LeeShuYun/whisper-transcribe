@@ -46,3 +46,5 @@ ng new frontend
 - https://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven
 - https://angular.dev/reference/migrations/standalone
 - https://github.com/corydolphin/flask-cors
+- https://developer.mozilla.org/en-US/docs/Web/HTTP/MIME_types
+- https://www.npmjs.com/package/ngx-file-drop
