@@ -4,12 +4,12 @@ import { Health, Transcription } from '../model/entity';
 import { firstValueFrom, map, Subject, tap } from 'rxjs';
 import { API_ENDPOINT } from '../model/constants';
 import { Router } from '@angular/router';
+
 @Injectable({
   providedIn: 'root'
 })
 export class HelperService {
-  audioData = ""
-
+  //pushes successful transcription to UploadComponent from /transcribe
   onNewTranscriptions = new Subject<Transcription>()
 
   constructor(private router: Router, private httpClient: HttpClient) {}
