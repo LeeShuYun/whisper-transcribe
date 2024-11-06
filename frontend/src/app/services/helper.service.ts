@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http'
-import { Health, SearchCommand, Transcription } from '../model/entity';
+import { Health, Transcription } from '../model/entity';
 import { firstValueFrom, map, Subject, tap } from 'rxjs';
 import { API_ENDPOINT } from '../model/constants';
 @Injectable({

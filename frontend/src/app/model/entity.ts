@@ -16,7 +16,3 @@ export interface Health {
   "details": string,
   "links": Links[]
 }
-
-export interface SearchCommand{
-  query: string
-}
