@@ -1,7 +1,7 @@
 export interface Transcription {
   id: number,
   created_on: string,
-  audio_file_string: string,
+  audio_file_name: string,
   transcription: string
 }
 
@@ -17,6 +17,6 @@ export interface Health {
   "links": Links[]
 }
 
-export interface GetQuery{
+export interface SearchCommand{
   query: string
 }

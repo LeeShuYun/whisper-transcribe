@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HelperService } from '../../services/helper.service';
-import { Transcription } from '../../model/entity';
+import { SearchCommand, Transcription } from '../../model/entity';
 
 @Component({
   selector: 'app-searchbar',
@@ -10,8 +10,6 @@ import { Transcription } from '../../model/entity';
   styleUrl: './searchbar.component.css'
 })
 export class SearchbarComponent implements OnInit{
-
-  transcriptionlist: Transcription[] = []
 
   searchform!: FormGroup;
   uploadform!: FormGroup;
@@ -27,31 +25,29 @@ export class SearchbarComponent implements OnInit{
       searchterm: this.fb.control<string>('', [ Validators.required ])
     });
     this.uploadform = this.fb.group({
-      file: this.fb.control('')
+      file: this.fb.control('', [ Validators.required ])
     });
 
   }
 
   //TODO upload and transcribe
-  // transcribeAudioFile(){
-  //   const file = this.uploadform.value;
-  //   console.info(file)
-  //   this.helperService.uploadTranscribe(file);
-  //   this.router.navigate(['/transcribe']);
-  // }
+  transcribeAudioFile(){
+    const file = this.uploadform.value;
+    console.debug(file)
+    this.helperService.uploadTranscribe(file);
+    this.router.navigate(['/transcribe']);
+  }
 
   // puts search query
 	getSearchResults() {
-		const searchterm = this.searchform.value;
-		console.info('>>> searchterm: ', searchterm);
-    const formVal = this.uploadform.value;
-    this.helperService.searchTranscriptions(searchterm)
-      .then((result : any)=>{
-        console.log(result);
-        this.router.navigate(['/search'],
-          { queryParams: {query: searchterm}});
-      }).catch((error :any)=> {
-        console.error(error);
-      })
+		const searchterm = this.searchform.value.searchterm;
+		console.debug('>>> searchbar searchterm: ', searchterm);
+    this.router.navigate(['/search'], { queryParams: {query: searchterm}})
 	}
+
+  // get all transcriptions
+	getTranscriptions() {
+    this.router.navigate(['/transcriptions'])
+	}
+
 }

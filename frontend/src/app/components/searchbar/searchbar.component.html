@@ -1,42 +1,30 @@
-<!-- <button (click)="getSearchResults()">
-  Search
-</button>
-<button (click)="transcribeAudioFile()">
-  Transcribe Audio
-</button> -->
-<h2> Search existing transcriptions! </h2>
+<h2> Search existing transcriptions </h2>
 <form [formGroup]="searchform" (ngSubmit)="getSearchResults()">
   <table>
       <tr>
-        <td>Search database by filename:</td>
+        <td>
+          Search database by filename:
+        </td>
         <td>
           <input type="text" size="30" formControlName="searchterm"/>
+          <button type="submit" [disabled]="searchform.invalid"> Search </button>
         </td>
-      </tr>
-      <tr>
-          <td>
-              <button type="submit"> Search </button>
-          </td>
       </tr>
   </table>
 </form>
 
-<h2> Transcribe your audio file! </h2>
-<!-- <form [formGroup]="uploadform" (ngSubmit)="transcribeAudioFile()" enctype="multipart/form-data">
+<h2> Transcribe your audio file </h2>
+<form [formGroup]="uploadform" (ngSubmit)="transcribeAudioFile()" enctype="multipart/form-data">
 	<table>
 		<tr>
 			<td>Transcribe an MP3 file:</td>
       <td>
         <input type="file" size="30" formControlName="file"/>
+        <button type="submit" [disabled]="uploadform.invalid"> Transcribe </button>
       </td>
 		</tr>
-		<tr>
-			<td></td>
-			<td>
-        <button type="submit" [disabled]="uploadform.invalid"> Transcribe </button>
-			</td>
-		</tr>
 	</table>
-</form> -->
+</form>
 
 <button type="button" [routerLink]="['/']">Back</button>
+<button type="button" [routerLink]="['/transcriptions']">See All Transcriptions</button>

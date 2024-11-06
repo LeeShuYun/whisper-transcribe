@@ -9,13 +9,17 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http'
 import { HelperService } from './services/helper.service';
 import { UploadComponent } from './components/upload/upload.component';
+import { InstructionsComponent } from './components/instructions/instructions.component';
+import { TranscriptionsComponent } from './components/transcriptions/transcriptions.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SearchbarComponent,
     SearchComponent,
-    UploadComponent
+    UploadComponent,
+    InstructionsComponent,
+    TranscriptionsComponent
   ],
   imports: [
     BrowserModule,
