@@ -1,0 +1,32 @@
+x-config:
+  - &IMAGE_NAME "leeshuyun/private-test:0.0.1-flask-dev"
+  - &CONTAINER_NAME "backend-container"
+  - &BUILDER_CONTAINER_NAME "node-builder"
+
+services:
+  # build a node server image to run our code on (docker-compose build node)
+  node:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: *IMAGE_NAME
+    container_name: *BUILDER_CONTAINER_NAME
+  # mount current src files and run on node builder (docker-compose up dev)
+  dev:
+    image: *IMAGE_NAME
+    container_name: *CONTAINER_NAME
+    ports:
+      - '5000:5000' # forwarding host port 5000: container port 5000
+    volumes:
+      - ./src:/usr/src/app/src # mount project ./src to linux's /usr/src/app/src
+    command: flask --app src/app.py --debug run --host=0.0.0.0 # start proj when container starts
+
+# services:
+#   python-app:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     ports:
+#       - "8080:8080"
+#     volumes:
+#       - .:/app:ro
