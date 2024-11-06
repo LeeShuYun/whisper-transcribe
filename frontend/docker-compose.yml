@@ -1,0 +1,22 @@
+x-config:
+  - &IMAGE_NAME "leeshuyun/private-test:0.0.2-ng-dev"
+  - &CONTAINER_NAME "frontend-container"
+  - &BUILDER_CONTAINER_NAME "node-builder"
+
+services:
+  # build a node server image to run our code on (docker-compose build node)
+  node:
+    build:
+      context: .
+      dockerfile: Dockerfile #building with Dockerfile (default)
+    image: *IMAGE_NAME
+    container_name: *BUILDER_CONTAINER_NAME
+  # mount current src files and run on node builder (docker-compose up dev)
+  dev:
+    image: *IMAGE_NAME
+    container_name: *CONTAINER_NAME
+    ports:
+      - '4200:4200' # forwarding host port 4200: container port 4200
+    volumes:
+      - ./src:/usr/src/app/src # mount project ./src to linux's /usr/src/app/src
+    command: ng serve --host 0.0.0.0 --poll 200 # start proj when container starts, set webpack refresh time to 200ms
