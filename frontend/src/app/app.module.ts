@@ -29,7 +29,8 @@ import { NgxFileDropModule } from 'ngx-file-drop';
     HttpClientModule,
     NgxFileDropModule
   ],
-  providers: [ HelperService ],
-  bootstrap: [AppComponent]
+  providers: [ HelperService, HttpClientModule ],
+  bootstrap: [AppComponent],
+  schemas: []
 })
 export class AppModule { }
