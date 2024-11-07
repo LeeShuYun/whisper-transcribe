@@ -20,7 +20,8 @@ export class SearchComponent{
       console.log(searchterm);
       this.helperService.searchTranscriptions(searchterm)
       .then((result : any) => {
-        this.transcriptionlist = result
+        console.log("result:", result);
+        this.transcriptionlist.push(result)
         console.info("transcriptions=", this.transcriptionlist)
         }
       );

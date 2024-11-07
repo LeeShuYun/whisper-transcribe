@@ -42,6 +42,9 @@ export class SearchbarComponent implements OnInit{
           this.helperService.uploadTranscribe(file);
         });
         this.router.navigate(['/transcribe']);
+      } else
+      {
+        alert("File is not valid")
       }
       // else {
       //   // It was a directory (empty directories are added, otherwise only files)
@@ -57,20 +60,6 @@ export class SearchbarComponent implements OnInit{
 
   public fileLeave(event : any){
     console.log(event);
-  }
-
-  //TODO upload and transcribe
-  transcribeAudioFile(){
-    const audiofile = this.uploadform.value.audiofile;
-    console.debug("file to upload:", audiofile)
-    if (!!audiofile)
-      this.isAudioFileValid = false
-    else
-    {
-      this.isAudioFileValid = true
-      this.helperService.uploadTranscribe(audiofile);
-      this.router.navigate(['/transcribe']);
-    }
   }
 
   // puts search query

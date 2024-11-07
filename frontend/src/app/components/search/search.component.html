@@ -9,6 +9,6 @@
   </div>
   }
 
-<h2 *ngIf="transcriptionlist.length <= 0">
-  No transcriptions found. 
-</h2>
+@if (transcriptionlist.length <= 0){
+  <h2>No transcriptions found.</h2>
+}
