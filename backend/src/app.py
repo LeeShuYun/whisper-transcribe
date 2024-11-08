@@ -3,11 +3,13 @@ from flask_restful import Api, Resource, fields, marshal_with, request
 from flask_cors import CORS
 from sqlalchemy import select, insert
 from sqlalchemy.sql import text
+import logging
 import json
 import os
 
 from .entities.entity import Session, engine, Base, Transcribe, TranscriptionIndex, transcribe_fields
 from .services.whispertiny import audio_to_text
+from .services.sqlite_repo import transcribeAndSave
 from .config.config import DevelopmentConfig
 from .config.constants import links
 
@@ -19,6 +21,8 @@ session = Session()
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
+
+logger = logging.getLogger(__name__)
 
 @app.route('/')
 def index():
@@ -34,6 +38,7 @@ def index():
 # GET /health: Returns the status of the service. TODO
 class get_health(Resource):
     def get(self):
+        logger.info("Accessing /health... ")
         data={
             "status": "UP",
             "links": links
@@ -47,24 +52,23 @@ api.add_resource(get_health,'/health')
 # ii. POST /transcribe: Accepts audio files, transcribe and save results in db.
 class post_transcribe(Resource):
     def post(self):
+        logger.info("Accessing /transcribe... ")
         try:
-            print("trying... ")
-            # extract file from request body
+            # extract file from request body and validate
+            logger.debug("Try: get data from request... ")
             file = request.files['audiofile']
-            print(file)
-
-            print("processing file...")
+            logger.debug("file obtained>> ".format(file))
             if not file:
                 abort(400, description='Empty file.')
             filename = request.files['audiofile'].filename
-            if not filename.lower().endswith(('.mp3', '.wav')):
+            if not filename.lower().endswith(('.mp3')):
                 abort(400, description='Wrong file format.{}'.format(e))
+
+            logger.debug("Try: processing file...")
             file_bytes = file.read()
-            transcription = audio_to_text(file_bytes)
-            print(transcription)
-            transcribe_record = Transcribe(filename, transcription)
-            session.add(transcribe_record)
-            session.commit()
+            transcription = transcribeAndSave(filename, file_bytes)
+
+            # create response
             data={
                 "status": "Success",
                 "details": "Transcription of '" + filename + "' saved.",
@@ -72,15 +76,11 @@ class post_transcribe(Resource):
                 "transcription" : transcription,
                 "links" : links
             }
-            # create response
             response = jsonify(data)
             response.headers.add('Access-Control-Allow-Origin', '*') #TODO should restrict
             return response
         except Exception as e:
             abort(400, description='Failed to process file.{}'.format(e))
-
-
-
 
 api.add_resource(post_transcribe,'/transcribe')
 
@@ -90,7 +90,7 @@ class get_transcriptions(Resource):
     def get(self):
         transcriptions = session.query(Transcribe).all()
         for t in session.query(Transcribe).all():
-            print (t.__dict__)
+            logger.debug("row obtained>> ".format(t.__dict__))
         if not transcriptions:
             abort(404, description="Transcriptions not found.")
         # response = jsonify(transcriptions)
@@ -106,7 +106,7 @@ class get_search(Resource):
     def get(self):
         #retrieve search term from query param
         search_term = request.args.get('query')
-        print(search_term)
+        logger.debug("search_term>> ".format(search_term))
 
          # TODO validation
 
@@ -118,7 +118,7 @@ class get_search(Resource):
             .order_by(TranscriptionIndex.rank)
         )
         search_result = query.all()
-        print(search_result)
+        logger.debug("search_result>> ".format(search_result))
 
         if not search_result:
             abort(404, description="Transcriptions not found.")

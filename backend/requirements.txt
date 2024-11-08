@@ -1,3 +1,4 @@
+-f https://download.pytorch.org/whl/torch_stable.html
 aniso8601==9.0.1
 ansible-core==2.16.7
 asgiref==3.7.2
@@ -39,9 +40,9 @@ SQLAlchemy==2.0.36
 sqlparse==0.4.4
 sympy==1.13.1
 tokenizers==0.20.1
-torch==2.5.1
-torchaudio==2.5.1
-torchvision==0.20.1
+torch==2.3.1
+torchaudio==2.3.1
+torchvision==0.18.1
 tqdm==4.66.6
 transformers==4.46.1
 typing_extensions==4.12.2
